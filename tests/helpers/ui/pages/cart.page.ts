@@ -11,6 +11,18 @@ export class CartPage {
     await expect(this.page.getByTestId("cart-heading")).toBeVisible();
   }
 
+  async expectReady(itemCount = 1) {
+    await this.expectLoaded();
+    if (itemCount === 0) {
+      await expect(this.page.getByTestId("cart-empty")).toBeVisible();
+      return;
+    }
+
+    await expect(this.page.getByTestId("cart-content")).toBeVisible();
+    await expect(this.page.getByTestId("cart-item")).toHaveCount(itemCount);
+    await expect(this.page.getByTestId("cart-total")).toContainText("Total: $");
+  }
+
   async expectItemCount(count: number) {
     await expect(this.page.getByTestId("cart-item")).toHaveCount(count);
   }

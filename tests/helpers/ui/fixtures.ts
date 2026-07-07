@@ -35,7 +35,7 @@ export const test = base.extend<UiFixtures>({
 
   cartWithItem: async ({ page, loginPage, shopPage, cartPage }, use) => {
     await loginPage.login();
-    await shopPage.goto();
+    await shopPage.expectLoaded();
     await shopPage.addFirstBookToCart();
     await shopPage.goToCart();
     await cartPage.expectLoaded();

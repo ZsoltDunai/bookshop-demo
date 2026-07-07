@@ -13,6 +13,10 @@ export class LoginPage {
     await this.page.getByTestId("login-email").fill(email);
     await this.page.getByTestId("login-password").fill(password);
     await this.page.getByTestId("login-submit").click();
+    await Promise.race([
+      this.page.waitForURL(/\/shop/, { timeout: 15_000 }),
+      this.page.getByTestId("login-alert").waitFor({ state: "visible", timeout: 15_000 }),
+    ]);
   }
 
   async expectLoginError() {

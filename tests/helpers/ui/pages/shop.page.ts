@@ -10,9 +10,18 @@ export class ShopPage {
   async expectLoaded() {
     await expect(this.page.getByTestId("shop-heading")).toBeVisible();
     await expect(this.page.getByTestId("book-grid")).toBeVisible();
+    await this.expectCatalogLoaded();
+  }
+
+  async expectCatalogLoaded() {
+    await expect(this.page.getByTestId("book-card").first()).toBeVisible();
+    await expect(
+      this.page.getByTestId("add-to-cart").and(this.page.locator(":enabled")).first()
+    ).toBeVisible();
   }
 
   async addFirstBookToCart() {
+    await this.expectCatalogLoaded();
     await this.page.getByTestId("add-to-cart").and(this.page.locator(":enabled")).first().click();
   }
 

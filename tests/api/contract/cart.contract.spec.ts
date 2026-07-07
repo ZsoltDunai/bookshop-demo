@@ -1,5 +1,6 @@
 import { test, expect } from "@helpers/fixtures";
 import { assertContract, assertJsonContract } from "@helpers/contract";
+import { UNAUTHENTICATED_HTTP_STATUS } from "@helpers/constants";
 import {
   cartContractSchema,
   cartItemContractSchema,
@@ -84,9 +85,9 @@ test.describe("Cart API contract", () => {
     await assertJsonContract(response, 422, validationErrorSchema, "POST /api/cart/items 422");
   });
 
-  test("GET /api/cart without auth returns 403", async ({ request }) => {
+  test("GET /api/cart without auth returns 401", async ({ request }) => {
     const response = await request.get("/api/cart");
-    expect(response.status()).toBe(403);
+    expect(response.status()).toBe(UNAUTHENTICATED_HTTP_STATUS);
   });
 
   test("POST /api/cart/items for unknown book returns error contract", async ({ request, authedUser }) => {

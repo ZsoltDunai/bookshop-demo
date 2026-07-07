@@ -1,4 +1,5 @@
 import { test, expect } from "@helpers/fixtures";
+import { UNAUTHENTICATED_HTTP_STATUS } from "@helpers/constants";
 import { AuthApi } from "@helpers/clients/auth.api";
 import { CartApi } from "@helpers/clients/cart.api";
 
@@ -12,7 +13,7 @@ test.describe("API security", () => {
     const response = await request.get("/api/cart", {
       headers: { Authorization: "NotBearer token" },
     });
-    expect(response.status()).toBe(403);
+    expect(response.status()).toBe(UNAUTHENTICATED_HTTP_STATUS);
   });
 
   test("rejects registration with short password", async ({ authApi }) => {
@@ -55,7 +56,7 @@ test.describe("API security", () => {
     ]);
 
     for (const result of results) {
-      expect(result.status).toBe(403);
+      expect(result.status).toBe(UNAUTHENTICATED_HTTP_STATUS);
     }
   });
 });

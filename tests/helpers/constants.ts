@@ -11,3 +11,6 @@ export const API_TIMEOUTS = {
   login: 1500,
   concurrentBooks: 3000,
 } as const;
+
+/** FastAPI HTTPBearer returns 401 when credentials are missing or invalid. */
+export const UNAUTHENTICATED_HTTP_STATUS = 401;

@@ -1,4 +1,5 @@
 import { test, expect } from "@helpers/fixtures";
+import { UNAUTHENTICATED_HTTP_STATUS } from "@helpers/constants";
 import { Book, CartItem } from "@helpers/types";
 
 test.describe("Cart API", () => {
@@ -38,6 +39,6 @@ test.describe("Cart API", () => {
 
   test("cart requires authentication", async ({ request }) => {
     const response = await request.get("/api/cart");
-    expect(response.status()).toBe(403);
+    expect(response.status()).toBe(UNAUTHENTICATED_HTTP_STATUS);
   });
 });

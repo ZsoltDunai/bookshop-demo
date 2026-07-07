@@ -6,7 +6,7 @@ import {
   userContractSchema,
   validationErrorSchema,
 } from "@helpers/contract/schemas";
-import { DEFAULT_PASSWORD } from "@helpers/constants";
+import { DEFAULT_PASSWORD, UNAUTHENTICATED_HTTP_STATUS } from "@helpers/constants";
 
 test.describe("Auth API contract", () => {
   test("POST /api/auth/login returns Token contract", async ({ request, authApi }) => {
@@ -58,8 +58,8 @@ test.describe("Auth API contract", () => {
     await assertJsonContract(response, 422, validationErrorSchema, "POST /api/auth/register 422");
   });
 
-  test("GET /api/auth/me without token returns 403", async ({ request }) => {
+  test("GET /api/auth/me without token returns 401", async ({ request }) => {
     const response = await request.get("/api/auth/me");
-    expect(response.status()).toBe(403);
+    expect(response.status()).toBe(UNAUTHENTICATED_HTTP_STATUS);
   });
 });

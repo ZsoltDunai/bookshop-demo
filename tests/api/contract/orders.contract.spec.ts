@@ -1,5 +1,6 @@
 import { test, expect } from "@helpers/fixtures";
 import { assertContract, assertJsonContract } from "@helpers/contract";
+import { UNAUTHENTICATED_HTTP_STATUS } from "@helpers/constants";
 import {
   errorContractSchema,
   orderContractSchema,
@@ -78,8 +79,8 @@ test.describe("Orders API contract", () => {
     await assertJsonContract(response, 400, errorContractSchema, "POST /api/orders/checkout 400");
   });
 
-  test("GET /api/orders without auth returns 403", async ({ request }) => {
+  test("GET /api/orders without auth returns 401", async ({ request }) => {
     const response = await request.get("/api/orders");
-    expect(response.status()).toBe(403);
+    expect(response.status()).toBe(UNAUTHENTICATED_HTTP_STATUS);
   });
 });

@@ -1,5 +1,5 @@
 import { test, expect } from "@helpers/fixtures";
-import { DEMO_USER } from "@helpers/constants";
+import { DEMO_USER, UNAUTHENTICATED_HTTP_STATUS } from "@helpers/constants";
 
 test.describe("Auth API", () => {
   test("login with valid credentials returns token", async ({ authApi }) => {
@@ -25,6 +25,6 @@ test.describe("Auth API", () => {
 
   test("protected endpoint rejects missing token", async ({ request }) => {
     const response = await request.get("/api/auth/me");
-    expect(response.status()).toBe(403);
+    expect(response.status()).toBe(UNAUTHENTICATED_HTTP_STATUS);
   });
 });

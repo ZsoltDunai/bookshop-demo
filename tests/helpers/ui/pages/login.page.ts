@@ -1,5 +1,5 @@
 import { Page, expect } from "@playwright/test";
-import { DEMO_USER } from "../constants";
+import { DEMO_USER } from "../../constants";
 
 export class LoginPage {
   constructor(private readonly page: Page) {}

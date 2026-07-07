@@ -23,7 +23,7 @@ jobs:
   test:
     name: API & UI tests
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Checkout
@@ -46,8 +46,24 @@ jobs:
           docker compose logs backend
           exit 1
 
-      - name: Run Playwright tests
-        run: docker compose --profile test run --rm tests
+      - name: Run API Playwright tests
+        run: docker compose --profile test run --rm tests npx playwright test --project=api-functional --project=api-non-functional --project=api-contract
+
+      - name: Reset database for UI tests
+        run: |
+          docker compose down -v
+          docker compose up -d --build backend
+          for i in {1..30}; do
+            if curl -fsS http://localhost:8000/health > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker compose logs backend
+          exit 1
+
+      - name: Run UI Playwright tests
+        run: docker compose --profile test run --rm tests npx playwright test --project=ui
 
       - name: Tear down
         if: always()

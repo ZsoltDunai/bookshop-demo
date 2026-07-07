@@ -26,7 +26,10 @@ async function api(path, options = {}) {
   const response = await fetch(path, { ...options, headers });
   if (response.status === 401) {
     clearToken();
-    window.location.href = "/login";
+    const isLoginRequest = String(path).includes("/api/auth/login");
+    if (!isLoginRequest) {
+      window.location.href = "/login";
+    }
     throw new Error("Unauthorized");
   }
 

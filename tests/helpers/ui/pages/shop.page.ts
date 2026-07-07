@@ -13,7 +13,7 @@ export class ShopPage {
   }
 
   async addFirstBookToCart() {
-    await this.page.getByTestId("add-to-cart").first().click();
+    await this.page.getByTestId("add-to-cart").and(this.page.locator(":enabled")).first().click();
   }
 
   async expectAddToCartSuccess() {

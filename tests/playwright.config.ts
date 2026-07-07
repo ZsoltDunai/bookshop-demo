@@ -23,6 +23,10 @@ export default defineConfig({
       testMatch: /api\/non-functional\/.*\.spec\.ts/,
     },
     {
+      name: "api-contract",
+      testMatch: /api\/contract\/.*\.spec\.ts/,
+    },
+    {
       name: "ui",
       testMatch: /ui\/.*\.spec\.ts/,
       use: { ...devices["Desktop Chrome"] },

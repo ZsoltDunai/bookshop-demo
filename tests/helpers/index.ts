@@ -7,3 +7,4 @@ export * from "./api";
 export * from "./timing";
 export * from "./clients";
 export * from "./schemas";
+export * from "./contract";

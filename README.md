@@ -37,12 +37,14 @@ bookshop-demo/
 │   │   │   ├── orders.api.ts
 │   │   │   └── health.api.ts
 │   │   ├── schemas/            # Zod contract validation
+│   │   ├── contract/           # Contract test helpers
 │   │   └── ui/                 # UI test support
 │   │       ├── fixtures.ts     # Logged-in page fixtures
 │   │       └── pages/          # Page objects
 │   ├── api/
 │   │   ├── functional/         # Business logic API tests
-│   │   └── non-functional/     # Performance, security, reliability
+│   │   ├── non-functional/     # Performance, security, reliability
+│   │   └── contract/           # API contract/schema validation
 │   └── ui/                     # UI test specs
 └── docker-compose.yml
 ```
@@ -115,6 +117,7 @@ Run only API or UI tests:
 npm run test:api                  # all API tests
 npm run test:api:functional       # functional only
 npm run test:api:non-functional   # performance, security, reliability
+npm run test:api:contract         # request/response contract validation
 npm run test:ui
 ```
 
@@ -131,6 +134,7 @@ API and UI tests share a layered helper structure under `tests/helpers/`:
 | **Clients** | `clients/*.api.ts` | Fluent domain API (`cartApi.addItem()`) |
 | **Response** | `response.ts` | `ApiResponse.expectOk()`, `.parse()` |
 | **Schemas** | `schemas/` | Zod contract validation on API responses |
+| **Contract** | `contract/` | `assertContract()` helper + strict schemas |
 | **Page objects** | `ui/pages/` | UI abstractions (`LoginPage`, `ShopPage`) |
 
 Import via path alias:
@@ -161,6 +165,22 @@ test("checkout", async ({ cartWithItem, ordersPage }) => {
   await cartWithItem.checkout();
   await ordersPage.expectCheckoutSuccess();
 });
+```
+
+Contract example:
+
+```typescript
+import { assertContract } from "@helpers/contract";
+import { bookContractSchema } from "@helpers/contract/schemas";
+
+const book = await assertContract(request, {
+  name: "GET /api/books/{id}",
+  method: "GET",
+  path: (ctx) => `/api/books/${ctx.bookId}`,
+  status: 200,
+  responseSchema: bookContractSchema,
+  contentType: "application/json",
+}, { bookId: 1 });
 ```
 
 ## CI/CD

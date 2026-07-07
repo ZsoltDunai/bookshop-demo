@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.db
+.venv/
+venv/
+.env
+
+# Node
+node_modules/
+playwright-report/
+test-results/
+blob-report/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

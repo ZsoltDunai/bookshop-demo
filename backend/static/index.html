@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bookshop Demo</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">Bookshop Demo</div>
+    <nav>
+      <a href="/" data-testid="nav-home">Home</a>
+      <a href="/login" id="nav-login" data-testid="nav-login">Login</a>
+      <a href="/shop" id="nav-shop" class="hidden" data-testid="nav-shop">Shop</a>
+      <a href="/cart" id="nav-cart" class="hidden" data-testid="nav-cart">Cart</a>
+      <a href="/orders" id="nav-orders" class="hidden" data-testid="nav-orders">Orders</a>
+      <button id="nav-logout" class="hidden secondary" data-testid="nav-logout">Logout</button>
+    </nav>
+  </header>
+  <main>
+    <section class="hero card">
+      <h1>Welcome to Bookshop Demo</h1>
+      <p>A simple webshop for browsing books, managing your cart, and checking out.</p>
+      <a href="/login" class="btn" data-testid="cta-login">Get Started</a>
+    </section>
+  </main>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

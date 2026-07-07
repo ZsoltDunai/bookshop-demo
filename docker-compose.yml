@@ -1,0 +1,30 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: sqlite:////data/bookshop.db
+      SECRET_KEY: demo-secret-key-change-in-production
+    volumes:
+      - bookshop-data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  tests:
+    build: ./tests
+    profiles: ["test"]
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      BASE_URL: http://backend:8000
+      DOCKER: "1"
+      CI: "true"
+
+volumes:
+  bookshop-data:

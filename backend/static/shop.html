@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop - Bookshop Demo</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">Bookshop Demo</div>
+    <nav>
+      <a href="/" data-testid="nav-home">Home</a>
+      <a href="/shop" data-testid="nav-shop">Shop</a>
+      <a href="/cart" data-testid="nav-cart">Cart</a>
+      <a href="/orders" data-testid="nav-orders">Orders</a>
+      <button id="nav-logout" data-testid="nav-logout">Logout</button>
+    </nav>
+  </header>
+  <main>
+    <h1 data-testid="shop-heading">Browse Books</h1>
+    <div id="alert" class="alert hidden" data-testid="shop-alert"></div>
+    <div id="book-grid" class="book-grid" data-testid="book-grid"></div>
+  </main>
+  <script src="/static/js/app.js"></script>
+  <script>
+    if (!isLoggedIn()) {
+      window.location.href = "/login";
+    }
+
+    async function loadBooks() {
+      const books = await api("/api/books");
+      const grid = document.getElementById("book-grid");
+      grid.innerHTML = books.map((book) => `
+        <div class="card book-card" data-testid="book-card" data-book-id="${book.id}">
+          <h3 data-testid="book-title">${book.title}</h3>
+          <div class="author" data-testid="book-author">${book.author}</div>
+          <div class="price" data-testid="book-price">${formatPrice(book.price)}</div>
+          <div style="color: var(--muted); font-size: 0.85rem; margin-bottom: 0.75rem;">
+            ${book.stock} in stock
+          </div>
+          <button data-testid="add-to-cart" onclick="addToCart(${book.id})"
+                  ${book.stock === 0 ? "disabled" : ""}>
+            Add to Cart
+          </button>
+        </div>
+      `).join("");
+    }
+
+    async function addToCart(bookId) {
+      hideAlert("alert");
+      try {
+        await api("/api/cart/items", {
+          method: "POST",
+          body: JSON.stringify({ book_id: bookId, quantity: 1 }),
+        });
+        showAlert("alert", "Added to cart!", "success");
+      } catch (err) {
+        showAlert("alert", err.message);
+      }
+    }
+
+    loadBooks().catch((err) => showAlert("alert", err.message));
+  </script>
+</body>
+</html>

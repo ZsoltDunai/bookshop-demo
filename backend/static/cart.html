@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart - Bookshop Demo</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">Bookshop Demo</div>
+    <nav>
+      <a href="/" data-testid="nav-home">Home</a>
+      <a href="/shop" data-testid="nav-shop">Shop</a>
+      <a href="/cart" data-testid="nav-cart">Cart</a>
+      <a href="/orders" data-testid="nav-orders">Orders</a>
+      <button id="nav-logout" data-testid="nav-logout">Logout</button>
+    </nav>
+  </header>
+  <main>
+    <h1 data-testid="cart-heading">Your Cart</h1>
+    <div id="alert" class="alert hidden" data-testid="cart-alert"></div>
+    <div id="cart-empty" class="card hidden" data-testid="cart-empty">
+      <p>Your cart is empty. <a href="/shop">Browse books</a></p>
+    </div>
+    <div id="cart-content" class="card hidden">
+      <div id="cart-items" data-testid="cart-items"></div>
+      <div class="cart-total" data-testid="cart-total"></div>
+      <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+        <button id="checkout-btn" data-testid="checkout-btn">Checkout</button>
+        <button class="secondary" id="clear-cart-btn" data-testid="clear-cart-btn">Clear Cart</button>
+      </div>
+    </div>
+  </main>
+  <script src="/static/js/app.js"></script>
+  <script>
+    if (!isLoggedIn()) {
+      window.location.href = "/login";
+    }
+
+    async function loadCart() {
+      const cart = await api("/api/cart");
+      const empty = document.getElementById("cart-empty");
+      const content = document.getElementById("cart-content");
+      const itemsEl = document.getElementById("cart-items");
+      const totalEl = document.getElementById("cart-total");
+
+      if (cart.items.length === 0) {
+        empty.classList.remove("hidden");
+        content.classList.add("hidden");
+        return;
+      }
+
+      empty.classList.add("hidden");
+      content.classList.remove("hidden");
+      itemsEl.innerHTML = cart.items.map((item) => `
+        <div class="cart-item" data-testid="cart-item" data-item-id="${item.id}">
+          <div>
+            <strong data-testid="cart-item-title">${item.book.title}</strong>
+            <div style="color: var(--muted); font-size: 0.9rem;">
+              ${formatPrice(item.book.price)} × ${item.quantity}
+            </div>
+          </div>
+          <button class="danger" data-testid="remove-item" onclick="removeItem(${item.id})">Remove</button>
+        </div>
+      `).join("");
+      totalEl.textContent = `Total: ${formatPrice(cart.total)}`;
+    }
+
+    async function removeItem(itemId) {
+      hideAlert("alert");
+      try {
+        await api(`/api/cart/items/${itemId}`, { method: "DELETE" });
+        await loadCart();
+      } catch (err) {
+        showAlert("alert", err.message);
+      }
+    }
+
+    document.getElementById("checkout-btn").addEventListener("click", async () => {
+      hideAlert("alert");
+      try {
+        const order = await api("/api/orders/checkout", { method: "POST" });
+        window.location.href = `/orders?order=${order.id}`;
+      } catch (err) {
+        showAlert("alert", err.message);
+      }
+    });
+
+    document.getElementById("clear-cart-btn").addEventListener("click", async () => {
+      hideAlert("alert");
+      try {
+        await api("/api/cart", { method: "DELETE" });
+        await loadCart();
+      } catch (err) {
+        showAlert("alert", err.message);
+      }
+    });
+
+    loadCart().catch((err) => showAlert("alert", err.message));
+  </script>
+</body>
+</html>

@@ -1,12 +1,8 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "@helpers/ui/fixtures";
 
 test.describe("Shop UI", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto("/login");
-    await page.getByTestId("login-email").fill("demo@bookshop.io");
-    await page.getByTestId("login-password").fill("password123");
-    await page.getByTestId("login-submit").click();
-    await expect(page).toHaveURL(/\/shop/);
+  test.beforeEach(async ({ loggedInShop }) => {
+    await loggedInShop.expectLoaded();
   });
 
   test("displays book catalog", async ({ page }) => {
@@ -17,16 +13,14 @@ test.describe("Shop UI", () => {
     await expect(page.getByTestId("book-price").first()).toContainText("$");
   });
 
-  test("add book to cart shows success message", async ({ page }) => {
-    await page.getByTestId("add-to-cart").first().click();
-    await expect(page.getByTestId("shop-alert")).toBeVisible();
-    await expect(page.getByTestId("shop-alert")).toHaveText("Added to cart!");
+  test("add book to cart shows success message", async ({ loggedInShop }) => {
+    await loggedInShop.addFirstBookToCart();
+    await loggedInShop.expectAddToCartSuccess();
   });
 
-  test("navigate to cart from shop", async ({ page }) => {
-    await page.getByTestId("add-to-cart").first().click();
-    await page.getByTestId("nav-cart").click();
-    await expect(page).toHaveURL(/\/cart/);
-    await expect(page.getByTestId("cart-item")).toHaveCount(1);
+  test("navigate to cart from shop", async ({ loggedInShop, cartPage }) => {
+    await loggedInShop.addFirstBookToCart();
+    await loggedInShop.goToCart();
+    await cartPage.expectItemCount(1);
   });
 });

@@ -15,8 +15,12 @@ export default defineConfig({
   },
   projects: [
     {
-      name: "api",
-      testMatch: /api\/.*\.spec\.ts/,
+      name: "api-functional",
+      testMatch: /api\/functional\/.*\.spec\.ts/,
+    },
+    {
+      name: "api-non-functional",
+      testMatch: /api\/non-functional\/.*\.spec\.ts/,
     },
     {
       name: "ui",

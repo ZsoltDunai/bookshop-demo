@@ -21,10 +21,29 @@ bookshop-demo/
 │   ├── Dockerfile
 │   ├── app/          # API routes, models, auth
 │   └── static/       # HTML/CSS/JS pages
-├── tests/            # Playwright TypeScript tests
+├── tests/                      # Playwright TypeScript tests
 │   ├── Dockerfile
-│   ├── api/          # API test specs
-│   └── ui/           # UI test specs
+│   ├── helpers/
+│   │   ├── api.ts              # Low-level auth utilities
+│   │   ├── constants.ts        # Demo user, timeouts
+│   │   ├── fixtures.ts       # API test fixtures
+│   │   ├── response.ts        # ApiResponse wrapper
+│   │   ├── timing.ts           # Performance helpers
+│   │   ├── types.ts            # Shared TypeScript types
+│   │   ├── clients/            # Fluent API service objects
+│   │   │   ├── auth.api.ts
+│   │   │   ├── books.api.ts
+│   │   │   ├── cart.api.ts
+│   │   │   ├── orders.api.ts
+│   │   │   └── health.api.ts
+│   │   ├── schemas/            # Zod contract validation
+│   │   └── ui/                 # UI test support
+│   │       ├── fixtures.ts     # Logged-in page fixtures
+│   │       └── pages/          # Page objects
+│   ├── api/
+│   │   ├── functional/         # Business logic API tests
+│   │   └── non-functional/     # Performance, security, reliability
+│   └── ui/                     # UI test specs
 └── docker-compose.yml
 ```
 
@@ -93,11 +112,56 @@ npm test
 Run only API or UI tests:
 
 ```bash
-npm run test:api
+npm run test:api                  # all API tests
+npm run test:api:functional       # functional only
+npm run test:api:non-functional   # performance, security, reliability
 npm run test:ui
 ```
 
 Playwright starts the backend automatically via `webServer` in `playwright.config.ts`.
+
+### Test patterns
+
+API and UI tests share a layered helper structure under `tests/helpers/`:
+
+| Layer | Location | Purpose |
+|-------|----------|---------|
+| **Constants** | `constants.ts` | `DEMO_USER`, `API_TIMEOUTS` |
+| **Fixtures** | `fixtures.ts`, `ui/fixtures.ts` | Playwright `test.extend` setup |
+| **Clients** | `clients/*.api.ts` | Fluent domain API (`cartApi.addItem()`) |
+| **Response** | `response.ts` | `ApiResponse.expectOk()`, `.parse()` |
+| **Schemas** | `schemas/` | Zod contract validation on API responses |
+| **Page objects** | `ui/pages/` | UI abstractions (`LoginPage`, `ShopPage`) |
+
+Import via path alias:
+
+```typescript
+import { test, expect } from "@helpers/fixtures";
+import { DEMO_USER } from "@helpers/constants";
+import { test as uiTest } from "@helpers/ui/fixtures";
+```
+
+API example:
+
+```typescript
+test.beforeEach(async ({ booksApi }) => {
+  book = await booksApi.first();
+});
+
+test("add item", async ({ cartApi }) => {
+  await cartApi.addItem(book.id, 2);
+  expect((await cartApi.get()).items).toHaveLength(1);
+});
+```
+
+UI example:
+
+```typescript
+test("checkout", async ({ cartWithItem, ordersPage }) => {
+  await cartWithItem.checkout();
+  await ordersPage.expectCheckoutSuccess();
+});
+```
 
 ## CI/CD
 

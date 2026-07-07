@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "test": "playwright test",
-    "test:api": "playwright test --project=api",
+    "test:api": "playwright test --project=api-functional --project=api-non-functional",
+    "test:api:functional": "playwright test --project=api-functional",
+    "test:api:non-functional": "playwright test --project=api-non-functional",
     "test:ui": "playwright test --project=ui",
     "test:headed": "playwright test --headed",
     "report": "playwright show-report"
@@ -12,6 +14,7 @@
   "devDependencies": {
     "@playwright/test": "^1.49.1",
     "@types/node": "^22.10.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "zod": "^3.24.1"
   }
 }

@@ -6,6 +6,10 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@helpers/*": ["helpers/*"]
+    },
     "types": ["node"]
   },
   "include": ["**/*.ts"]

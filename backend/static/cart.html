@@ -25,7 +25,6 @@
     </div>
     <div id="cart-content" class="card hidden" data-testid="cart-content">
       <div id="cart-items" data-testid="cart-items"></div>
-      <div class="cart-total" data-testid="cart-total"></div>
       <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
         <button id="checkout-btn" data-testid="checkout-btn">Checkout</button>
         <button class="secondary" id="clear-cart-btn" data-testid="clear-cart-btn">Clear Cart</button>
@@ -43,13 +42,18 @@
       const empty = document.getElementById("cart-empty");
       const content = document.getElementById("cart-content");
       const itemsEl = document.getElementById("cart-items");
-      const totalEl = document.getElementById("cart-total");
 
       if (cart.items.length === 0) {
         empty.classList.remove("hidden");
         content.classList.add("hidden");
+        itemsEl.innerHTML = "";
         return;
       }
+
+      const total = cart.items.reduce(
+        (sum, item) => sum + Number(item.book.price) * Number(item.quantity),
+        0
+      );
 
       empty.classList.add("hidden");
       content.classList.remove("hidden");
@@ -63,12 +67,9 @@
           </div>
           <button class="danger" data-testid="remove-item" onclick="removeItem(${item.id})">Remove</button>
         </div>
-      `).join("");
-      const total = cart.items.reduce(
-        (sum, item) => sum + Number(item.book.price) * Number(item.quantity),
-        0
-      );
-      totalEl.textContent = `Total: ${formatPrice(total)}`;
+      `).join("") + `
+        <div class="cart-total" data-testid="cart-total">Total: ${formatPrice(total)}</div>
+      `;
     }
 
     async function removeItem(itemId) {

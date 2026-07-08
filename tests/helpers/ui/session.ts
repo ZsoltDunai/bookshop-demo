@@ -18,9 +18,10 @@ export async function seedDemoUserCart(page: Page, request: APIRequestContext): 
 
   await cartApi.addItem(books[0].id);
 
-  await page.goto("/");
-  await page.evaluate(
-    ([key, token]) => localStorage.setItem(key, token),
+  await page.addInitScript(
+    ([key, token]) => {
+      localStorage.setItem(key, token);
+    },
     [TOKEN_KEY, access_token] as const,
   );
 }

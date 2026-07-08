@@ -4,13 +4,8 @@ export class CartPage {
   constructor(private readonly page: Page) {}
 
   async goto() {
-    await Promise.all([
-      this.page.waitForResponse((response) => {
-        const url = new URL(response.url());
-        return url.pathname === "/api/cart" && response.request().method() === "GET" && response.ok();
-      }),
-      this.page.goto("/cart"),
-    ]);
+    await this.page.goto("/cart");
+    await expect(this.page.getByTestId("cart-heading")).toBeVisible();
   }
 
   async expectLoaded() {

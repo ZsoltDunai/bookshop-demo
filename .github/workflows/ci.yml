@@ -24,7 +24,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build and start backend
-        run: docker compose up -d --build backend
+        run: docker compose up -d --build --force-recreate backend
 
       - name: Wait for backend health
         run: |
@@ -47,7 +47,7 @@ jobs:
       - name: Reset database for UI tests
         run: |
           docker compose down -v
-          docker compose up -d --build backend
+          docker compose up -d --build --force-recreate backend
           for i in {1..30}; do
             if curl -fsS http://localhost:8000/health > /dev/null; then
               echo "Backend is healthy after reset"

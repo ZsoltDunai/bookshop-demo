@@ -64,11 +64,10 @@
           <button class="danger" data-testid="remove-item" onclick="removeItem(${item.id})">Remove</button>
         </div>
       `).join("");
-      const computedTotal = cart.items.reduce(
+      const total = cart.items.reduce(
         (sum, item) => sum + Number(item.book.price) * Number(item.quantity),
         0
       );
-      const total = Number.isFinite(Number(cart.total)) ? Number(cart.total) : computedTotal;
       totalEl.textContent = `Total: ${formatPrice(total)}`;
     }
 

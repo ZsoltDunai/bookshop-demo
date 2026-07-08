@@ -21,6 +21,6 @@ test.describe("Shop UI", () => {
   test("navigate to cart from shop", async ({ loggedInShop, cartPage }) => {
     await loggedInShop.addFirstBookToCart();
     await loggedInShop.goToCart();
-    await cartPage.expectItemCount(1);
+    await cartPage.expectReady(1);
   });
 });

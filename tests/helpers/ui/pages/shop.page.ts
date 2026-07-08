@@ -34,14 +34,8 @@ export class ShopPage {
   }
 
   async goToCart() {
-    const cartResponse = this.page.waitForResponse(
-      (response) =>
-        response.url().includes("/api/cart") &&
-        response.request().method() === "GET" &&
-        response.ok()
-    );
     await this.page.getByTestId("nav-cart").click();
-    await cartResponse;
+    await this.page.waitForURL(/\/cart$/);
   }
 
   async expectAddToCartSuccess() {

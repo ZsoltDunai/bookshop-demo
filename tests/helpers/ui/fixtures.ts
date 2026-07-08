@@ -37,7 +37,7 @@ export const test = base.extend<UiFixtures>({
     await loginPage.login();
     await shopPage.expectLoaded();
     await shopPage.addFirstBookToCart();
-    await shopPage.goToCart();
+    await cartPage.goto();
     await cartPage.expectReady(1);
     await use(cartPage);
   },

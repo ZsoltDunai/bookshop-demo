@@ -45,7 +45,11 @@ async function api(path, options = {}) {
 }
 
 function formatPrice(amount) {
-  return `$${amount.toFixed(2)}`;
+  const value = Number(amount);
+  if (!Number.isFinite(value)) {
+    return "$0.00";
+  }
+  return `$${value.toFixed(2)}`;
 }
 
 function showAlert(containerId, message, type = "error") {

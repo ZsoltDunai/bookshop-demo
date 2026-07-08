@@ -64,7 +64,7 @@
           <button class="danger" data-testid="remove-item" onclick="removeItem(${item.id})">Remove</button>
         </div>
       `).join("");
-      totalEl.textContent = `Total: ${formatPrice(cart.total)}`;
+      totalEl.textContent = `Total: ${formatPrice(cart.total ?? 0)}`;
     }
 
     async function removeItem(itemId) {

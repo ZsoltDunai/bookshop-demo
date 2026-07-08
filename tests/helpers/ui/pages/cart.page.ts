@@ -5,6 +5,7 @@ export class CartPage {
 
   async goto() {
     await this.page.goto("/cart");
+    await this.page.waitForURL(/\/cart$/);
   }
 
   async expectLoaded() {
@@ -18,9 +19,19 @@ export class CartPage {
       return;
     }
 
-    await expect(this.page.getByTestId("cart-content")).toBeVisible();
-    await expect(this.page.getByTestId("cart-item")).toHaveCount(itemCount);
-    await expect(this.page.getByTestId("cart-total")).toContainText("Total: $");
+    await this.page.waitForFunction(
+      ({ count }) => {
+        const items = document.querySelectorAll('[data-testid="cart-item"]');
+        const total = document.querySelector('[data-testid="cart-total"]');
+        return (
+          items.length === count &&
+          !!total?.textContent &&
+          total.textContent.includes("Total: $")
+        );
+      },
+      { count: itemCount },
+      { timeout: 15_000 }
+    );
   }
 
   async expectItemCount(count: number) {

@@ -1,5 +1,6 @@
 import { test as base } from "@playwright/test";
 import { LoginPage, ShopPage, CartPage, OrdersPage } from "./pages";
+import { seedDemoUserCart } from "./session";
 
 type UiFixtures = {
   loginPage: LoginPage;
@@ -33,10 +34,8 @@ export const test = base.extend<UiFixtures>({
     await use(shopPage);
   },
 
-  cartWithItem: async ({ page, loginPage, shopPage, cartPage }, use) => {
-    await loginPage.login();
-    await shopPage.expectLoaded();
-    await shopPage.addFirstBookToCart();
+  cartWithItem: async ({ page, request, cartPage }, use) => {
+    await seedDemoUserCart(page, request);
     await cartPage.goto();
     await cartPage.expectReady(1);
     await use(cartPage);

@@ -4,8 +4,13 @@ export class CartPage {
   constructor(private readonly page: Page) {}
 
   async goto() {
-    await this.page.goto("/cart");
-    await this.page.waitForURL(/\/cart$/);
+    await Promise.all([
+      this.page.waitForResponse((response) => {
+        const url = new URL(response.url());
+        return url.pathname === "/api/cart" && response.request().method() === "GET" && response.ok();
+      }),
+      this.page.goto("/cart"),
+    ]);
   }
 
   async expectLoaded() {
@@ -19,19 +24,8 @@ export class CartPage {
       return;
     }
 
-    await this.page.waitForFunction(
-      ({ count }) => {
-        const items = document.querySelectorAll('[data-testid="cart-item"]');
-        const total = document.querySelector('[data-testid="cart-total"]');
-        return (
-          items.length === count &&
-          !!total?.textContent &&
-          total.textContent.includes("Total: $")
-        );
-      },
-      { count: itemCount },
-      { timeout: 15_000 }
-    );
+    await expect(this.page.getByTestId("cart-item")).toHaveCount(itemCount, { timeout: 15_000 });
+    await expect(this.page.getByTestId("cart-total")).toContainText("Total: $", { timeout: 15_000 });
   }
 
   async expectItemCount(count: number) {
